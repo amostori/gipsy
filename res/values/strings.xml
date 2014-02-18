@@ -7,7 +7,7 @@
     <string name="aktual">Pozycja aktualna</string>
     <string name="szr">Szerokość: </string>
     <string name="dlg">Długość: </string>
-    <string name="naguzik">Kliknij</string>
-    <string name="poprzednia">Ostatnia znana pozycja</string>
+    <string name="naguzik">Pokaż na mapie</string>
+    <string name="poczekaj">Poczekaj kilka sekund na pomiar</string>
 
 </resources>
