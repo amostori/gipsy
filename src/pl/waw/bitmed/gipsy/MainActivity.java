@@ -17,7 +17,10 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends Activity implements LocationListener, OnClickListener{
 
@@ -114,8 +117,11 @@ public class MainActivity extends Activity implements LocationListener, OnClickL
 	public void onClick(View arg0) {
 		// TODO Auto-generated method stub
 		if(pozycja != null){
-			map.moveCamera(CameraUpdateFactory.newLatLngZoom(pozycja, 18));
-			map.animateCamera(CameraUpdateFactory.zoomTo(18), 2000, null);
+			map.moveCamera(CameraUpdateFactory.newLatLngZoom(pozycja, 16));
+			map.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
+			
+			Marker mrk = map.addMarker(new MarkerOptions().position(pozycja).title("Tu jestem").snippet("Snipeyt").icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
+			
 		}else{
 			Toast.makeText(getBaseContext(), "Brak pomiaru - poczekaj jeszcze", Toast.LENGTH_LONG).show();
 		}
