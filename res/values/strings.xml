@@ -4,10 +4,10 @@
     <string name="app_name">FindMe</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    <string name="aktual">Pozycja aktualna</string>
+    <string name="aktual">Pozycja aktualna w ułamkach stopni</string>
     <string name="szr">Szerokość: </string>
     <string name="dlg">Długość: </string>
     <string name="naguzik">Pokaż na mapie</string>
-    <string name="poczekaj">Poczekaj kilka sekund na pomiar</string>
+    <string name="poczekaj">Poczekaj około minuty na pomiar</string>
 
 </resources>

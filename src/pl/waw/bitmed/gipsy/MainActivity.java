@@ -1,11 +1,15 @@
 package pl.waw.bitmed.gipsy;
 
+import java.math.BigDecimal;
+
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.view.View;
@@ -14,6 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -21,6 +26,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 
 public class MainActivity extends Activity implements LocationListener, OnClickListener{
 
@@ -33,7 +39,7 @@ public class MainActivity extends Activity implements LocationListener, OnClickL
 	WakeLock wakeLock;
 	private GoogleMap map;
 	private LatLng pozycja;
-	//static final LatLng Wroclaw = new LatLng(51.110, 17.030);
+	static final LatLng Wroclaw = new LatLng(51.110, 17.030);
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +51,6 @@ public class MainActivity extends Activity implements LocationListener, OnClickL
 		setContentView(R.layout.activity_main);
 		
 		map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
-		//map.setMyLocationEnabled(true);
-	//	map.moveCamera(CameraUpdateFactory.newLatLngZoom(Wroclaw, 15));
-	//	map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
-		
-		//pozycja = new LatLng(50.12, 19.45);
 		
 		tvSzAktual = (TextView)findViewById(R.id.textView3);
 		tvDlgAktual = (TextView)findViewById(R.id.textView44);
@@ -62,7 +63,8 @@ public class MainActivity extends Activity implements LocationListener, OnClickL
 		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 		locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER,
                 6000, 1, this);
-		//lct = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		Toast.makeText(getBaseContext(), "Trwa namierzanie", Toast.LENGTH_LONG).show();
+		Toast.makeText(getBaseContext(), "To mo¿e potrwaæ kilkanaœcie minut", Toast.LENGTH_LONG).show();
 		
 	}//end of onCreate
 
@@ -73,32 +75,28 @@ public class MainActivity extends Activity implements LocationListener, OnClickL
 		double szerokosc = location.getLatitude();
 		double dlugosc = location.getLongitude();
 		
+		//skrócenie liczby do 6 miejsc po przecinku
+		double szerokosc6 = roundMe(szerokosc, 6);
+		double dlugosc6 = roundMe(dlugosc, 6);
+		
 		pozycja = new LatLng(szerokosc, dlugosc);
-		//pozycja.latitude = szerokosc;
-		szAktual = String.valueOf(szerokosc);
+		
+		szAktual = String.valueOf(szerokosc6);
 		tvSzAktual.setText(" "+szAktual);
 		
-		dlgAktual = String.valueOf(dlugosc); 
+		dlgAktual = String.valueOf(dlugosc6); 
 		tvDlgAktual.setText(" "+dlgAktual);
 		
 	}
 	
-	public void ustaw(Location loc, TextView tekst1, TextView tekst2){
-		if(loc!=null){
-		double dl = loc.getLongitude();
-		String dlg = String.valueOf(dl);
-		double sz = loc.getLatitude();
-		String szr = String.valueOf(sz);
-		tekst1.setText(" "+szr);
-		tekst2.setText(" "+dlg);
-		}else{
-			Toast.makeText(getBaseContext(), "Dupa - nie ma ostatniej pozycji", Toast.LENGTH_LONG).show();
-		}
-	}
+	
 	@Override
 	public void onProviderDisabled(String arg0) {
+		
+		///////////////////////////////
 		// TODO Auto-generated method stub
 		Toast.makeText(getBaseContext(), "Gps turned off ", Toast.LENGTH_LONG).show();
+		startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 0);
 	}
 
 	@Override
@@ -117,13 +115,18 @@ public class MainActivity extends Activity implements LocationListener, OnClickL
 	public void onClick(View arg0) {
 		// TODO Auto-generated method stub
 		if(pozycja != null){
-			map.moveCamera(CameraUpdateFactory.newLatLngZoom(pozycja, 16));
-			map.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
+			map.moveCamera(CameraUpdateFactory.newLatLngZoom(pozycja, 15));
+			map.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
 			
 			Marker mrk = map.addMarker(new MarkerOptions().position(pozycja).title("Tu jestem").snippet("Snipeyt").icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
 			
 		}else{
 			Toast.makeText(getBaseContext(), "Brak pomiaru - poczekaj jeszcze", Toast.LENGTH_LONG).show();
+			map.moveCamera(CameraUpdateFactory.newLatLngZoom(Wroclaw, 16));
+			map.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
+			
+			Marker mrk = map.addMarker(new MarkerOptions().position(Wroclaw).title("Tu jestem").snippet("Snipeyt").icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
+			
 		}
 		
 		
@@ -144,6 +147,12 @@ public class MainActivity extends Activity implements LocationListener, OnClickL
 	    super.onPause();
 	    locationManager.removeUpdates(this);
 	  }
+	  
+	  public double roundMe(double val, int places){
+			BigDecimal bd = new BigDecimal(val);
+			bd =  bd.setScale(places, BigDecimal.ROUND_HALF_UP);
+			return bd.doubleValue();
+		}
 	  
 
 }
